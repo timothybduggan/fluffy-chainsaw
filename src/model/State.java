@@ -1,12 +1,12 @@
 package model;
 
-
 public class State {
 	private Jug jugA;
 	private Jug jugB;
 	private boolean done;
 	private int jugAgoal;
 	private int jugBgoal;
+	private int expansions;
 	
 	/* Parameters:
 	 * 	capacity of jug A, capacity of jug B
@@ -18,6 +18,7 @@ public class State {
 		jugB = new Jug(jugBcapacity, jugBinitial);
 		this.jugAgoal = jugAgoal;
 		this.jugBgoal = jugBgoal;
+		this.expansions = 0;
 	}
 	
 	public String getState() {
@@ -67,7 +68,7 @@ public class State {
 			ruleApplied = "Pour water from the " + jugB.getName() + " into the " + jugA.getName();
 			break;
 		default:
-			System.out.println(ruleNumber+" is not a valid Rule#");
+			System.out.println(ruleNumber+" is not a valid rule # [1-10]");
 			break;
 		}
 		
@@ -82,5 +83,9 @@ public class State {
 		else 
 			done = true;
 		return done;
+	}
+	
+	public State copy() {
+		return new State(jugA.getCapacity(), jugB.getCapacity(), jugA.getState(), jugB.getState(), this.jugAgoal, this.jugBgoal);
 	}
 }
