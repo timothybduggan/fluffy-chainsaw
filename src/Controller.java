@@ -18,6 +18,10 @@ public class Controller {
 		this.jugBname = jugBcapacity+"-gallon jug";
 	}
 	
+	public String initialMessage(State initial) {
+		return "Starting out with a "+jugAname+" and a "+jugBname+"\t--- state: "+initial.toString()+"\n";
+	}
+	
 	public boolean checkRule(int ruleNumber, State state) {
 		if (state == null) return false;
 		
@@ -46,12 +50,12 @@ public class Controller {
 			}
 			return false;
 		case 7:
-			if (state.getJugSum() >= jugAcapacity && state.getJugB() > 0) { // pour from B to A until A full
+			if (state.getJugSum() >= jugAcapacity && state.getJugA() < jugAcapacity) { // pour from B to A until A full
 				return true;
 			}
 			return false;
 		case 8:
-			if (state.getJugSum() >= jugBcapacity && state.getJugA() > 0) { // pour from A to B until B full
+			if (state.getJugSum() >= jugBcapacity && state.getJugB() < jugBcapacity) { // pour from A to B until B full
 				return true;
 			}
 			return false;
@@ -74,34 +78,46 @@ public class Controller {
 		if (!checkRule(ruleNumber, state)) return null; // this should be checked by the caller before rule is applied, but we will double check
 		String writeBack = "";
 		
-		state = tryRule(ruleNumber, state);
+		//state = tryRule(ruleNumber, state);
 		
 		switch(ruleNumber) {
-		case 1: 
-			writeBack += "Fill the "+jugAname+"\t\t\t\t";
+		case 1:
+			state.updateState(jugAcapacity, state.getJugB());
+			writeBack += "Fill the "+jugAname+"\t\t\t\t\t";
 			break;
 		case 2:
-			writeBack += "Fill the "+jugBname+"\t\t\t\t";
+			state.updateState(state.getJugA(), jugBcapacity);
+			writeBack += "Fill the "+jugBname+"\t\t\t\t\t";
 			break;
 		case 5:
-			writeBack += "Empty the "+jugAname+"\t\t\t\t";
+			state.updateState(0, state.getJugB());
+			writeBack += "Empty the "+jugAname+"\t\t\t\t\t";
 			break;
 		case 6:
-			writeBack += "Empty the "+jugBname+"\t\t\t\t";
+			state.updateState(state.getJugA(), 0);
+			writeBack += "Empty the "+jugBname+"\t\t\t\t\t";
 			break;
 		case 7:
-		case 9:
+			state.updateState(jugAcapacity, state.getJugSum()-jugAcapacity);
 			writeBack += "Pour water from the "+jugBname+" into the "+jugAname+"\t";
 			break;
 		case 8:
+			state.updateState(state.getJugSum()-jugBcapacity, jugBcapacity);
+			writeBack += "Pour water from the "+jugAname+" into the "+jugBname+"\t";
+			break;
+		case 9: 
+			state.updateState(state.getJugSum(), 0);
+			writeBack += "Pour water from the "+jugBname+" into the "+jugAname+"\t";
+			break;
 		case 10:
+			state.updateState(0, state.getJugSum());
 			writeBack += "Pour water from the "+jugAname+" into the "+jugBname+"\t";
 			break;
 		default:
 			throw new IllegalArgumentException("Should be Unreachable");
 		}
 		
-		writeBack += "-- state:"+state.toString();
+		writeBack += "--- state: "+state.toString();
 		
 		return writeBack;
 	}
@@ -111,28 +127,28 @@ public class Controller {
 		
 		switch(ruleNumber) {
 		case 1:
-			nextState.updateState(jugAcapacity, nextState.getJugB());
+			nextState.updateState(jugAcapacity, state.getJugB());
 			break;
 		case 2:
-			nextState.updateState(nextState.getJugA(), jugBcapacity);
+			nextState.updateState(state.getJugA(), jugBcapacity);
 			break;
 		case 5:
-			nextState.updateState(0, nextState.getJugB());
+			nextState.updateState(0, state.getJugB());
 			break;
 		case 6:
-			nextState.updateState(nextState.getJugA(), 0);
+			nextState.updateState(state.getJugA(), 0);
 			break;
 		case 7:
-			nextState.updateState(jugAcapacity, nextState.getJugSum()-jugAcapacity);
+			nextState.updateState(jugAcapacity, state.getJugSum()-jugAcapacity);
 			break;
 		case 8:
-			nextState.updateState(nextState.getJugSum()-jugBcapacity, jugBcapacity);
+			nextState.updateState(state.getJugSum()-jugBcapacity, jugBcapacity);
 			break;
 		case 9:
-			nextState.updateState(nextState.getJugSum(), 0);
+			nextState.updateState(state.getJugSum(), 0);
 			break;
 		case 10:
-			nextState.updateState(0, nextState.getJugSum());
+			nextState.updateState(0, state.getJugSum());
 			break;
 		default:
 			break;

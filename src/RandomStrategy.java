@@ -11,7 +11,9 @@ public class RandomStrategy extends Strategy {
 
 	public void solveProblem(Controller control) throws IOException {
 		Random generator = new Random();
-		writeToFile(">Strategy A\n");
+		writeToFile("Strategy A\n");
+		writeToFile(control.initialMessage(currentState));
+		
 		while (numSteps < 250 && !currentState.isGoal(goalState)) {
 			// while we have taken < 250 steps, and we haven't reached goal state...
 			int rule = 0;
@@ -20,10 +22,11 @@ public class RandomStrategy extends Strategy {
 				rule = generator.nextInt(10)+1; // pick a rule from 1-10
 			}
 			// when we get here, our rule is valid..
-			String text = ">" + control.applyRule(rule, currentState) + "\n";
-			
+			String text = control.applyRule(rule, currentState) + "\n";
+			numSteps++;
 			writeToFile(text);
 		}
+		writeToFile("\n");
 	}
 
 }

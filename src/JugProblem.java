@@ -1,5 +1,7 @@
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -13,10 +15,14 @@ public class JugProblem {
 	public static void main(String[] args) throws IOException {
 		parseFile(args[0]);
 		Controller control = new Controller(initial, jugAcapacity, jugBcapacity, goal);
+		
 		Strategy strategyA = new RandomStrategy("output.txt", initial, goal, control);
-		Strategy strategyB = new RandomStrategy("output.txt", initial, goal, control); // Replace with SystematicStrategy
+		strategyA.solveProblem(control);
+		strategyA.end();
 		
-		
+		Strategy strategyB = new SystematicStrategy("output.txt", initial, goal, control);
+		strategyB.solveProblem(control);
+		strategyB.end();
 	}
 	
 	public static void parseFile(String fileName) {

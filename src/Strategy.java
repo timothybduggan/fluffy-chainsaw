@@ -19,6 +19,7 @@ public abstract class Strategy {
 	
 	public void writeToFile(String text) throws IOException {
 		out.write(text);
+		System.out.print(text);
 	}
 	
 	public void end() throws IOException {
